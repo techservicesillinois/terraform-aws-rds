@@ -51,6 +51,7 @@ output "this_db_instance_username" {
 output "this_db_instance_password" {
   description = "The database password (this password may be old, because Terraform doesn't track it after initial creation)"
   value       = "${var.password}"
+  sensitive   = true
 }
 
 output "this_db_instance_port" {
@@ -87,4 +88,21 @@ output "this_db_option_group_id" {
 output "this_db_option_group_arn" {
   description = "The ARN of the db option group"
   value       = "${module.db_option_group.this_db_option_group_arn}"
+}
+
+output "this_db_security_group_client_security_group_id" {
+  value = "${aws_security_group.client.id}"
+  value = "${module.db_security_group.client_security_group_id}"
+}
+
+output "this_db_security_group_client_security_group_name" {
+  value = "${module.db_security_group.client_security_group_name}"
+}
+
+output "this_db_security_group_server_security_group_id" {
+  value = "${module.db_security_group.server_security_group_id}"
+}
+
+output "this_db_security_group_server_security_group_name" {
+  value = "${module.db_security_group.server_security_group_name}"
 }

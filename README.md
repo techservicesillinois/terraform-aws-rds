@@ -15,6 +15,7 @@ Root module calls these modules which can also be used separately to create inde
 * [db_subnet_group](https://github.com/terraform-aws-modules/terraform-aws-rds/tree/master/modules/db_subnet_group) - creates RDS DB subnet group
 * [db_parameter_group](https://github.com/terraform-aws-modules/terraform-aws-rds/tree/master/modules/db_parameter_group) - creates RDS DB parameter group
 * [db_option_group](https://github.com/terraform-aws-modules/terraform-aws-rds/tree/master/modules/db_option_group) - creates RDS DB option group
+* [db_security_group](https://github.com/techservicesillinois/terraform-aws-client-server-security-group) – creates client and server security groups
 
 ## Usage
 
@@ -35,6 +36,8 @@ module "db" {
   port     = "3306"
 
   iam_database_authentication_enabled = true
+
+  vpc = "mysitevpc"
 
   vpc_security_group_ids = ["sg-12345678"]
 
@@ -123,7 +126,7 @@ module "db" {
 
 ## Notes
 
-1. This module does not create RDS security group. Use [terraform-aws-security-group](https://github.com/terraform-aws-modules/terraform-aws-security-group) module for this.
+1. The modified version of this module creates two RDS security groups – one to be added to authorized clients, and one to be added to the RDS servers to allow access only by the authorized clients. For the example above, this will create a `demodb-client` and `demodb-server` security groups. The server security group id is concatenated with any security groups specified in `vpc_security_group_ids`. See [terraform-aws-security-group](https://github.com/terraform-aws-modules/terraform-aws-security-group) and [terraform-aws-client-server-security-group](https://github.com/techservicesillinois/terraform-aws-client-server-security-group).
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
@@ -183,6 +186,7 @@ module "db" {
 | timeouts | (Optional) Updated Terraform resource management timeouts. Applies to `aws_db_instance` in particular to permit resource management times | map | `<map>` | no |
 | timezone | (Optional) Time zone of the DB instance. timezone is currently only supported by Microsoft SQL Server. The timezone can only be set on creation. See MSSQL User Guide for more information. | string | `` | no |
 | username | Username for the master DB user | string | - | yes |
+| vpc | Name of VPC in which DB resides | string | - | yes |
 | vpc_security_group_ids | List of VPC security groups to associate | string | `<list>` | no |
 
 ## Outputs
@@ -207,12 +211,18 @@ module "db" {
 | this_db_parameter_group_id | The db parameter group id |
 | this_db_subnet_group_arn | The ARN of the db subnet group |
 | this_db_subnet_group_id | The db subnet group name |
+| this_db_client_security_group_id | The ID of the client security group |
+| this_db_client_security_group_name | The name of the client security group |
+| this_db_server_security_group_id | The ID of the server security group |
+| this_db_server_security_group_name | The name of the server security group |
+
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Authors
 
-Currently maintained by [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-rds/graphs/contributors).
+Currently maintained by [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-rds/graphs/contributors), with additions by the University of Illinois
+at Urbana-Champaign.
 Migrated from `terraform-community-modules/tf_aws_rds`, where it was maintained by [these awesome contributors](https://github.com/terraform-community-modules/tf_aws_rds/graphs/contributors).
 Module managed by [Anton Babenko](https://github.com/antonbabenko).
 

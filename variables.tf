@@ -263,3 +263,7 @@ variable "deletion_protection" {
   description = "The database can't be deleted when this value is set to true."
   default     = false
 }
+
+variable "vpc" {
+  description = "The VPC in which the database resides."
+}

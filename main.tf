@@ -1,3 +1,9 @@
+data "aws_vpc" "selected" {
+  tags {
+    Name = "${var.vpc}"
+  }
+}
+
 locals {
   db_subnet_group_name          = "${coalesce(var.db_subnet_group_name, module.db_subnet_group.this_db_subnet_group_id)}"
   enable_create_db_subnet_group = "${var.db_subnet_group_name == "" ? var.create_db_subnet_group : 0}"
@@ -7,6 +13,8 @@ locals {
 
   option_group_name             = "${coalesce(var.option_group_name, module.db_option_group.this_db_option_group_id)}"
   enable_create_db_option_group = "${var.option_group_name == "" && var.engine != "postgres" ? var.create_db_option_group : 0}"
+
+  vpc_security_group_ids = "${concat(list(module.db_security_group.server_security_group_id), var.vpc_security_group_ids)}"
 }
 
 module "db_subnet_group" {
@@ -48,6 +56,15 @@ module "db_option_group" {
   tags = "${var.tags}"
 }
 
+module "db_security_group" {
+  # FIXME: Remember to remove ref=develop!!!
+  source = "git@github.com:techservicesillinois/terraform-aws-client-server-security-group?ref=v0.0.1"
+
+  name_prefix = "${var.identifier}-db"
+  port        = "${var.port}"
+  vpc_id      = "${data.aws_vpc.selected.id}"
+}
+
 module "db_instance" {
   source = "./modules/db_instance"
 
@@ -72,7 +89,7 @@ module "db_instance" {
 
   snapshot_identifier = "${var.snapshot_identifier}"
 
-  vpc_security_group_ids = ["${var.vpc_security_group_ids}"]
+  vpc_security_group_ids = ["${local.vpc_security_group_ids}"]
   db_subnet_group_name   = "${local.db_subnet_group_name}"
   parameter_group_name   = "${local.parameter_group_name}"
   option_group_name      = "${local.option_group_name}"
