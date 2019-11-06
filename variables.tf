@@ -54,6 +54,7 @@ variable "deletion_protection" {
 
 variable "enabled_cloudwatch_logs_exports" {
   description = "List of log types to enable for exporting to CloudWatch logs. If omitted, no logs will be exported. Valid values (depending on engine): alert, audit, error, general, listener, slowquery, trace."
+  type        = list(string)
   default     = []
 }
 
@@ -146,6 +147,7 @@ variable "password" {
 
 variable "port" {
   description = "Database connection port"
+  type        = number
 }
 
 variable "publicly_accessible" {
@@ -185,12 +187,13 @@ variable "storage_type" {
 
 variable "tags" {
   description = "(Optional) A mapping of tags to assign to the resource"
+  type        = map(string)
   default     = {}
 }
 
 variable "timeouts" {
   description = "(Optional) Terraform resource management timeouts"
-  type        = "map"
+  type        = map(string)
 
   default = {
     create = "40m"
