@@ -1,4 +1,7 @@
-.terraform
+*.swp
+
 terraform.tfstate
-*.tfstate*
-terraform.tfvars
+terraform.tfstate.*
+
+.terraform
+.terragrunt-cache

@@ -1,6 +1,6 @@
-[![Build Status](https://drone.techservices.illinois.edu/api/badges/techservicesillinois/terraform-aws-rds/status.svg)](https://drone.techservices.illinois.edu/techservicesillinois/terraform-aws-rds)
-
 # rds
+
+[![Build Status](https://drone.techservices.illinois.edu/api/badges/techservicesillinois/terraform-aws-rds/status.svg)](https://drone.techservices.illinois.edu/techservicesillinois/terraform-aws-rds)
 
 Provide an [RDS database instance](https://www.terraform.io/docs/providers/aws/r/db_instance.html).
 
@@ -45,7 +45,7 @@ name     = "service-db"
 # User name and password.
 username = "user"
 password = "password"
-port     = "1521"
+port     = 1521
 
 # Database engine details. Note that version needs to be consistent
 # with family and option_group_name settings in this file.
@@ -58,13 +58,13 @@ engine_version = "12.1.0.2.v11"
 
 # Instance class and storage in gigabytes.
 instance_class    = "db.t2.medium"
-allocated_storage = "100"
+allocated_storage = 100
 
 # Automatically apply minor version upgrades during maintenance window.
 auto_minor_version_upgrade = true
 
 # Save backups for this many days.
-backup_retention_period = "7"
+backup_retention_period = 7
 
 # Deploy in multiple availability zones.
 multi_az           = false
@@ -75,9 +75,9 @@ backup_window      = "07:00-10:00"
 # Maintenance window is expressed in UTC. Must not overlap with backup window.
 maintenance_window = "Sun:04:00-Sun:07:00"
 
-# When set to "true", deleting the database instance using the API or
+# When set to `true`, deleting the database instance using the API or
 # Terraform is prohibited. In order to delete the database (and snapshots),
-# this setting must be changed to "false", either using Terraform
+# this setting must be changed to false, either using Terraform
 # or the AWS console.
 deletion_protection = true
 
@@ -85,9 +85,9 @@ deletion_protection = true
 # snapshot_identifier = "service-snapshot"
 
 ###########################################################################
-# WARNING: Use caution; setting this value to "true" can cause data loss. #
+# WARNING: Use caution; setting this value to true can cause data loss. #
 ###########################################################################
-skip_final_snapshot = "false"
+skip_final_snapshot = false
 
 # Final database snapshot is given this identifier by default.
 # final_snapshot_identifier = "service-FINAL"
@@ -114,12 +114,12 @@ tags = {
 | allocated_storage | The allocated storage in gigabytes | string | - | yes |
 | allow_major_version_upgrade | Indicates that major version upgrades are allowed. Changing this parameter does not result in an outage and the change is asynchronously applied as soon as possible | string | `false` | no |
 | apply_immediately | Specifies whether any database modifications are applied immediately, or during the next maintenance window | string | `false` | no |
-| auto_minor_version_upgrade | Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window | string | `true` | no |
+| auto_minor_version_upgrade | Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window | bool | `true` | no |
 | availability_zone | The Availability Zone of the RDS instance | string | `` | no |
-| backup_retention_period | The days to retain backups for | string | `1` | no |
+| backup_retention_period | The days to retain backups for | number | `1` | no |
 | backup_window | The daily time range (in UTC) during which automated backups are created if they are enabled. Example: '09:46-10:16'. Must not overlap with maintenance_window | string | - | yes |
 | character_set_name | (Optional) The character set name to use for DB encoding in Oracle instances. This can't be changed. See Oracle Character Sets Supported in Amazon RDS for more information | string | `` | no |
-| copy_tags_to_snapshot | On delete, copy all Instance tags to the final snapshot (if final_snapshot_identifier is specified) | string | `false` | no |
+| copy_tags_to_snapshot | On delete, copy all Instance tags to the final snapshot (if final_snapshot_identifier is specified) | number | `false` | no |
 | db_subnet_group_name | Name of DB subnet group. DB instance will be created in the VPC associated with the DB subnet group. If unspecified, will be created in the default VPC | string | `` | no |
 | deletion_protection | The database can't be deleted when this value is set to true. | string | `false` | no |
 | enabled_cloudwatch_logs_exports | List of log types to enable for exporting to CloudWatch logs. If omitted, no logs will be exported. Valid values (depending on engine): alert, audit, error, general, listener, slowquery, trace. | string | `<list>` | no |
@@ -142,12 +142,12 @@ tags = {
 | parameter_group_name | Name of the DB parameter group to associate. | string | `` | no |
 | password | Password for the master DB user. Note that this may show up in logs, and it will be stored in the state file | string | - | yes |
 | port | The port on which the DB accepts connections | string | - | yes |
-| publicly_accessible | Bool to control if instance is publicly accessible | string | `false` | no |
+| publicly_accessible | Bool to control if instance is publicly accessible | bool | `false` | no |
 | replicate_source_db | Specifies that this resource is a Replicate database, and to use this value as the source database. This correlates to the identifier of another Amazon RDS Database to replicate. | string | `` | no |
 | security_group_names | Additonal security groups to associated with the task or service. This is a space delimited string list of security group names. | - | no |
-| skip_final_snapshot | Determines whether a final DB snapshot is created before the DB instance is deleted. If true is specified, no DBSnapshot is created. If false is specified, a DB snapshot is created before the DB instance is deleted, using the value from final_snapshot_identifier | string | `true` | no |
+| skip_final_snapshot | Determines whether a final DB snapshot is created before the DB instance is deleted. If true is specified, no DBSnapshot is created. If false is specified, a DB snapshot is created before the DB instance is deleted, using the value from final_snapshot_identifier | bool | `true` | no |
 | snapshot_identifier | Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05. | string | `` | no |
-| storage_encrypted | Specifies whether the DB instance is encrypted | string | `false` | no |
+| storage_encrypted | Specifies whether the DB instance is encrypted | bool | `false` | no |
 | storage_type | One of 'standard' (magnetic), 'gp2' (general purpose SSD), or 'io1' (provisioned IOPS SSD). The default is 'io1' if iops is specified, 'standard' if not. Note that this behaviour is different from the AWS web console, where the default is 'gp2'. | string | `gp2` | no |
 | tags | A mapping of tags to assign to all resources | string | `<map>` | no |
 | timeouts | (Optional) Updated Terraform resource management timeouts. Applies to `aws_db_instance` in particular to permit resource management times | map | `<map>` | no |
