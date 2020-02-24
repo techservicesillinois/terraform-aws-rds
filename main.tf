@@ -14,6 +14,7 @@ data "aws_security_group" "selected" {
 
 resource "aws_db_instance" "default" {
   allocated_storage                   = var.allocated_storage
+  max_allocated_storage               = var.max_allocated_storage
   allow_major_version_upgrade         = var.allow_major_version_upgrade
   apply_immediately                   = var.apply_immediately
   auto_minor_version_upgrade          = var.auto_minor_version_upgrade
@@ -51,7 +52,7 @@ resource "aws_db_instance" "default" {
   snapshot_identifier  = var.snapshot_identifier
   storage_encrypted    = var.storage_encrypted
   storage_type         = var.storage_type
-  tags = merge({ "Name" = var.identifier }, var.tags)
+  tags                 = merge({ "Name" = var.identifier }, var.tags)
   timeouts {
     create = lookup(var.timeouts, "create", null)
     delete = lookup(var.timeouts, "delete", null)
