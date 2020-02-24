@@ -2,6 +2,11 @@ variable "allocated_storage" {
   description = "Required unless a snapshot_identifier or replicate_source_db is provided) The allocated storage in gigabytes"
 }
 
+variable "max_allocated_storage" {
+  description = "When configured, the upper limit to which Amazon RDS can automatically scale the storage of the DB instance (in gigabytes)"
+  default     = null
+}
+
 variable "allow_major_version_upgrade" {
   description = "Allow major RDS engine upgrades (applied during the maintenance window)"
   default     = false
