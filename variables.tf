@@ -47,6 +47,10 @@ variable "copy_tags_to_snapshot" {
   default     = true
 }
 
+variable "db_name" {
+  description = "Database name to create."
+}
+
 variable "db_subnet_group_name" {
   description = "Database subnet group name; instance will be created in the associated VPC"
   default     = ""
@@ -131,11 +135,6 @@ variable "multi_az" {
   default     = false
 }
 
-variable "name" {
-  description = "Database name to create. If omitted, no database is created initially"
-  default     = ""
-}
-
 variable "option_group_name" {
   description = "Name of the DB option group to associate"
   default     = ""
@@ -144,10 +143,6 @@ variable "option_group_name" {
 variable "parameter_group_name" {
   description = "Name of the DB parameter group to associate"
   default     = ""
-}
-
-variable "password" {
-  description = "Password for the master DB user. Note that this may show up in logs, and it will be stored in Terraform's state file"
 }
 
 variable "port" {
@@ -162,7 +157,7 @@ variable "publicly_accessible" {
 
 variable "replicate_source_db" {
   description = "For a replicated database, use the database identifier specified here as the source database"
-  default     = ""
+  default     = null
 }
 
 variable "security_group_names" {

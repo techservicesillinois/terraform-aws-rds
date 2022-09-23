@@ -28,81 +28,80 @@ data will be irrevocably lost.**
 module "db" {
   source = "git@github.com:techservicesillinois/terraform-aws-rds"
 
-# Identifier for RDS instance.
-identifier = "service"
+  # Identifier for RDS instance.
+  identifier = "service"
 
-# Security group referenced below is created by the https://github.com/techservicesillinois/terraform-aws-client-server-security-group module.
-security_group_names = "service-db-servers"
+  # Name of database.
+  db_name   = "service-db"
 
-# Name of database to be created.
-name     = "service-db"
+  # Master user name. Password is automatically generated and should
+  # be IMMEDIATELY reset via the AWS console or CLI.
+  #
+  # NOTE: Initial # password may show up in logs, and it is stored in
+  # the Terraform state file.
+  username = "foobar"
+  port     = 5432
 
-# NOTE: Terraform-specified password is used to bring up infrastructure,
-# but is insecure because it's stored in the infrastructure state file.
-# We recommend changing password IMMEDIATELY to new value using AWS console,
-# and saving that password as a secure parameter in Amazon SSM.
+  # Database engine details. The engine_version must be consistent
+  # with family and option_group_name settings in this file.
+  engine         = "postgres"
+  engine_version = "14.4"
 
-# User name and password.
-username = "user"
-password = "password"
-port     = 1521
+  # Security group referenced below is created by the https://github.com/techservicesillinois/terraform-aws-client-server-security-group module.
+  security_group_names = "service-db-servers"
 
-# Database engine details. Note that version needs to be consistent
-# with family and option_group_name settings in this file.
-engine         = "oracle-ee"
-engine_version = "12.1.0.2.v11"
+  # Don't use the following settings in production!
+  # apply_immediately           = true
+  # allow_major_version_upgrade = true
 
-# Don't use the following settings in production!
-# apply_immediately = true
-# allow_major_version_upgrade = true
+  # Instance class and storage in gigabytes.
+  instance_class    = "db.t2.medium"
+  allocated_storage = 100
 
-# Instance class and storage in gigabytes.
-instance_class    = "db.t2.medium"
-allocated_storage = 100
+  # Automatically apply minor version upgrades during maintenance window.
+  auto_minor_version_upgrade = true
 
-# Automatically apply minor version upgrades during maintenance window.
-auto_minor_version_upgrade = true
+  # Save backups for this many days.
+  backup_retention_period = 7
 
-# Save backups for this many days.
-backup_retention_period = 7
+  # Deploy in multiple availability zones.
+  multi_az           = false
 
-# Deploy in multiple availability zones.
-multi_az           = false
+  # Backup window is expressed in UTC. Must not overlap with maintenance window.
+  backup_window      = "07:00-10:00"
 
-# Backup window is expressed in UTC. Must not overlap with maintenance window.
-backup_window      = "07:00-10:00"
+  # Maintenance window is expressed in UTC. Must not overlap with backup window.
+  maintenance_window = "Sun:04:00-Sun:07:00"
 
-# Maintenance window is expressed in UTC. Must not overlap with backup window.
-maintenance_window = "Sun:04:00-Sun:07:00"
+  # When set to `true`, deleting the database instance using the API or
+  # Terraform is prohibited. In order to delete the database (and snapshots),
+  # this setting must be changed to false, either using Terraform
+  # or the AWS console.
+  deletion_protection = true
 
-# When set to `true`, deleting the database instance using the API or
-# Terraform is prohibited. In order to delete the database (and snapshots),
-# this setting must be changed to false, either using Terraform
-# or the AWS console.
-deletion_protection = true
+  # If specified, use specified snapshot for initial database build.
+  # snapshot_identifier = "service-FINAL"
 
-# If specified, use snapshot for initial database build.
-# snapshot_identifier = "service-snapshot"
+  ###########################################################################
+  # WARNING: Use caution; setting this value to true can cause data loss.   #
+  ###########################################################################
+  skip_final_snapshot   = false
 
-###########################################################################
-# WARNING: Use caution; setting this value to true can cause data loss. #
-###########################################################################
-skip_final_snapshot = false
+  # Final database snapshot is given this identifier by default.
+  # final_snapshot_identifier = "service-FINAL"
 
-# Final database snapshot is given this identifier by default.
-# final_snapshot_identifier = "service-FINAL"
+  # Subnet must already exist.
+  db_subnet_group_name = "develop-subnet-2"
 
-# Subnet, parameter, and option group resources must already exist.
-db_subnet_group_name = "develop-subnet-2"
-parameter_group_name = "service-pg"
-# Note that RDS manages default option group.
-option_group_name    = "default:oracle-ee-12-1"
+  # THe option_group_name and parameter_group_name must already exist if
+  # using non-default values.
+  # option_group_name    = "default:postgres14"
+  # parameter_group_name = "service.parameter-group"
 
-tags = {
-  Environment = "test"
-  Name        = "service"
-  Owner       = "user"
-}
+  tags = {
+    Name        = "service"
+    Owner       = "user"
+  }
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -140,7 +139,6 @@ tags = {
 | name | The DB name to create. If omitted, no database is created initially. | string | `` | no |
 | option_group_name | Name of the DB option group to associate. Setting this automatically disables option_group creation | string | `` | no |
 | parameter_group_name | Name of the DB parameter group to associate. | string | `` | no |
-| password | Password for the master DB user. Note that this may show up in logs, and it will be stored in the state file | string | - | yes |
 | port | The port on which the DB accepts connections | string | - | yes |
 | publicly_accessible | Bool to control if instance is publicly accessible | bool | `false` | no |
 | replicate_source_db | Specifies that this resource is a Replicate database, and to use this value as the source database. This correlates to the identifier of another Amazon RDS Database to replicate. | string | `` | no |

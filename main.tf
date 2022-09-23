@@ -2,14 +2,20 @@ locals {
   final_snapshot_identifier = var.final_snapshot_identifier != "" ? var.final_snapshot_identifier : format("%s-FINAL", var.identifier)
   security_group_names      = compact(split(" ", var.security_group_names))
 
-  # TODO: Rethink how to make restoring from snapshot and destroying
-  # with snapshot more foolproof.
+  # TODO: Rethink how to make restoring from snapshot and dumping
+  # to snapshot more foolproof.
   # snapshot_identifier = "${var.snapshot_identifier != "" ? var.snapshot_identifier : format("%s", var.identifier)}"
 }
 
 data "aws_security_group" "selected" {
   count = length(local.security_group_names)
   name  = local.security_group_names[count.index]
+}
+
+resource "random_password" "default" {
+  length           = 24
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 resource "aws_db_instance" "default" {
@@ -36,15 +42,13 @@ resource "aws_db_instance" "default" {
   kms_key_id                          = var.kms_key_id
   license_model                       = var.license_model
   maintenance_window                  = var.maintenance_window
-
   # monitoring_interval                 = var.monitoring_interval
   # monitoring_role_arn                 = coalesce(var.monitoring_role_arn, join("", aws_iam_role.enhanced_monitoring.*.arn))
-  multi_az = var.multi_az
-
-  name                 = var.name
+  multi_az             = var.multi_az
+  db_name              = var.db_name
   option_group_name    = var.option_group_name
   parameter_group_name = var.parameter_group_name
-  password             = var.password
+  password             = random_password.default.result
   port                 = var.port
   publicly_accessible  = var.publicly_accessible
   replicate_source_db  = var.replicate_source_db
@@ -60,18 +64,18 @@ resource "aws_db_instance" "default" {
   }
   username = var.username
 
-  # Database password is established on creation. It should be changed
-  # IMMEDIATELY, and should be maintained in Amazon SSM so that the
-  # initial password stored in Terraform's state file is no longer
-  # meaningful. Similarly, we do *NOT* want Terraform to downgrade
-  # database instances after automatic minor version upgrades have
-  # taken place.
+  # Password is automatically generated and should be IMMEDIATELY reset
+  # via the AWS console or CLI. We therefore ignore password changes
+  # after the instance is created. We also ignore database engine versions
+  # in the configuration file after automatic minor version upgrades have
+  # occurred.
 
   lifecycle {
     ignore_changes = [
       engine_version,
       password,
     ]
+    prevent_destroy = true
   }
 
   # Calculated from "security_group_names" variable
