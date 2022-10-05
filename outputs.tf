@@ -1,19 +1,24 @@
-output "address" {
-  description = "Address of the RDS instance"
-  value       = aws_db_instance.default.address
-}
-
 output "arn" {
-  description = "ARN of the RDS instance"
+  description = "Instance ARN"
   value       = aws_db_instance.default.arn
 }
 
-output "name" {
-  description = "Database instance name"
-  value       = aws_db_instance.default.name
+output "db_name" {
+  description = "Instance name"
+  value       = aws_db_instance.default.db_name
+}
+
+output "endpoint" {
+  description = "Instance endpoint"
+  value       = aws_db_instance.default.endpoint
+}
+
+output "hostname" {
+  description = "Instance hostname"
+  value       = aws_db_instance.default.address
 }
 
 output "username" {
-  description = "Database username"
+  description = "Master username"
   value       = aws_db_instance.default.username
 }
