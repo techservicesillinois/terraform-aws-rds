@@ -24,7 +24,7 @@ variable "auto_minor_version_upgrade" {
 
 variable "availability_zone" {
   description = "Availability zone"
-  default     = ""
+  default     = null
 }
 
 variable "backup_retention_period" {
@@ -39,7 +39,7 @@ variable "backup_window" {
 
 variable "character_set_name" {
   description = "(Optional) The character set name to use for DB encoding in Oracle instances. This can't be changed. See Oracle Character Sets Supported in Amazon RDS for more information"
-  default     = ""
+  default     = null
 }
 
 variable "copy_tags_to_snapshot" {
@@ -53,7 +53,7 @@ variable "db_name" {
 
 variable "db_subnet_group_name" {
   description = "Database subnet group name; instance will be created in the associated VPC"
-  default     = ""
+  default     = null
 }
 
 variable "deletion_protection" {
@@ -73,12 +73,12 @@ variable "engine" {
 
 variable "engine_version" {
   description = "Engine version to use"
-  default     = ""
+  default     = null
 }
 
 variable "final_snapshot_identifier" {
   description = "Computed by default. Without a final snapshot, you will be unable to restore the data in a deleted RDS instance"
-  default     = ""
+  default     = null
 }
 
 variable "iam_database_authentication_enabled" {
@@ -97,22 +97,22 @@ variable "instance_class" {
 
 variable "iops" {
   description = "The amount of provisioned IOPS. Setting this implies a storage_type of 'io1'"
-  default     = 0
+  default     = null
 }
 
 variable "kms_key_id" {
   description = "ARN for the KMS encryption key. If creating an encrypted replica, set this to the destination KMS ARN."
-  default     = ""
+  default     = null
 }
 
 variable "license_model" {
   description = "License model information for this DB instance. Optional, but required for some DB engines, i.e. Oracle SE1"
-  default     = ""
+  default     = null
 }
 
 variable "maintenance_window" {
   description = "The window to perform maintenance in. Syntax: 'ddd:hh24:mi-ddd:hh24:mi'. Eg: 'Mon:00:00-Mon:03:00'"
-  default     = ""
+  default     = null
 }
 
 # variable "monitoring_interval" {
@@ -122,7 +122,7 @@ variable "maintenance_window" {
 
 # variable "monitoring_role_arn" {
 #   description = "The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs. Must be specified if monitoring_interval is non-zero."
-#   default     = ""
+#   default     = null
 # }
 
 # variable "monitoring_role_name" {
@@ -137,12 +137,12 @@ variable "multi_az" {
 
 variable "option_group_name" {
   description = "Name of the DB option group to associate"
-  default     = ""
+  default     = null
 }
 
 variable "parameter_group_name" {
   description = "Name of the DB parameter group to associate"
-  default     = ""
+  default     = null
 }
 
 variable "port" {
@@ -161,7 +161,9 @@ variable "replicate_source_db" {
 }
 
 variable "security_group_names" {
-  description = "Space-delimited string containing security group names"
+  description = "List of security group names"
+  type        = list(string)
+  default     = []
 }
 
 variable "skip_final_snapshot" {
@@ -172,7 +174,7 @@ variable "skip_final_snapshot" {
 # TODO: Determine how to simplify management of dump to snapshot and load from snapshot, and whether default values can be computed.
 variable "snapshot_identifier" {
   description = "If specified, use the named snapshot to create the database. The snapshot ID can be found in the RDS console, e.g: rds:service-2015-06-26-06-05."
-  default     = ""
+  default     = null
 }
 
 variable "storage_encrypted" {
@@ -181,8 +183,7 @@ variable "storage_encrypted" {
 }
 
 variable "storage_type" {
-  description = "One of 'standard' (magnetic), 'gp2' (general purpose SSD), or 'io1' (provisioned IOPS SSD). The default is 'io1' if iops is specified, 'standard' if not. Note that this behaviour is different from the AWS web console, where the default is 'gp2'."
-  default     = "gp2"
+  description = "One of the supported storage types"
 }
 
 variable "tags" {
@@ -193,13 +194,12 @@ variable "tags" {
 
 variable "timeouts" {
   description = "(Optional) Terraform resource management timeouts"
-  type        = map(string)
-
-  default = {
-    create = "40m"
-    update = "80m"
-    delete = "40m"
-  }
+  type = object({
+    create = optional(string)
+    delete = optional(string)
+    update = optional(string)
+  })
+  default = null
 }
 
 variable "username" {

@@ -1,15 +1,10 @@
 locals {
-  final_snapshot_identifier = var.final_snapshot_identifier != "" ? var.final_snapshot_identifier : format("%s-FINAL", var.identifier)
-  security_group_names      = compact(split(" ", var.security_group_names))
-
-  # TODO: Rethink how to make restoring from snapshot and dumping
-  # to snapshot more foolproof.
-  # snapshot_identifier = "${var.snapshot_identifier != "" ? var.snapshot_identifier : format("%s", var.identifier)}"
+  final_snapshot_identifier = var.final_snapshot_identifier != null ? var.final_snapshot_identifier : format("%s-FINAL", var.identifier)
 }
 
 data "aws_security_group" "selected" {
-  count = length(local.security_group_names)
-  name  = local.security_group_names[count.index]
+  for_each = toset(var.security_group_names)
+  name     = each.key
 }
 
 resource "random_password" "default" {
@@ -17,6 +12,9 @@ resource "random_password" "default" {
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
+
+# TODO: Investigate how to make dump to snapshot and restore from
+# snapshot more foolproof.
 
 resource "aws_db_instance" "default" {
   allocated_storage                   = var.allocated_storage
@@ -44,25 +42,33 @@ resource "aws_db_instance" "default" {
   maintenance_window                  = var.maintenance_window
   # monitoring_interval                 = var.monitoring_interval
   # monitoring_role_arn                 = coalesce(var.monitoring_role_arn, join("", aws_iam_role.enhanced_monitoring.*.arn))
-  multi_az             = var.multi_az
-  db_name              = var.db_name
-  option_group_name    = var.option_group_name
-  parameter_group_name = var.parameter_group_name
-  password             = random_password.default.result
-  port                 = var.port
-  publicly_accessible  = var.publicly_accessible
-  replicate_source_db  = var.replicate_source_db
-  skip_final_snapshot  = var.skip_final_snapshot
-  snapshot_identifier  = var.snapshot_identifier
-  storage_encrypted    = var.storage_encrypted
-  storage_type         = var.storage_type
-  tags                 = merge({ "Name" = var.identifier }, var.tags)
-  timeouts {
-    create = lookup(var.timeouts, "create", null)
-    delete = lookup(var.timeouts, "delete", null)
-    update = lookup(var.timeouts, "update", null)
+  multi_az               = var.multi_az
+  db_name                = var.db_name
+  option_group_name      = var.option_group_name
+  parameter_group_name   = var.parameter_group_name
+  password               = random_password.default.result
+  port                   = var.port
+  publicly_accessible    = var.publicly_accessible
+  replicate_source_db    = var.replicate_source_db
+  skip_final_snapshot    = var.skip_final_snapshot
+  snapshot_identifier    = var.snapshot_identifier
+  storage_encrypted      = var.storage_encrypted
+  storage_type           = var.storage_type
+  tags                   = merge({ "Name" = var.identifier }, var.tags)
+  username               = var.username
+  vpc_security_group_ids = [for sg in data.aws_security_group.selected : sg.id]
+
+  # FIXME: Timeout values appear to be unchangeable except on create.
+
+  dynamic "timeouts" {
+    for_each = toset(var.timeouts != null ? [var.timeouts] : [])
+
+    content {
+      create = timeouts.value.create
+      delete = timeouts.value.delete
+      update = timeouts.value.update
+    }
   }
-  username = var.username
 
   # Password is automatically generated and should be IMMEDIATELY reset
   # via the AWS console or CLI. We therefore ignore password changes
@@ -77,7 +83,4 @@ resource "aws_db_instance" "default" {
     ]
     prevent_destroy = true
   }
-
-  # Calculated from "security_group_names" variable
-  vpc_security_group_ids = data.aws_security_group.selected.*.id
 }
