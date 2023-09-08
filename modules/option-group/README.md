@@ -1,6 +1,4 @@
-# rds-option-group
-
-[![Terraform actions status](https://github.com/techservicesillinois/terraform-aws-rds-option-group/workflows/terraform/badge.svg)](https://github.com/techservicesillinois/terraform-aws-rds-option-group/actions)
+# rds/modules/option-group
 
 Manage an RDS option group.
 
@@ -8,9 +6,9 @@ Manage an RDS option group.
 
 ```hcl
 module "rds-option-group" {
-  source = "git@github.com:techservicesillinois/terraform-aws-rds-option-group"
+  source = "git@github.com:techservicesillinois/terraform-aws-rds//modules/option-group"
 
-  engine = "oracle-ee"
+  engine         = "oracle-ee"
   engine_version = "19"
 
   # Prefix for option group name.
@@ -31,7 +29,11 @@ The following arguments are supported:
 
 * `engine_version` - (Required) Major engine version to which group applies
 
-* `option` - (Optional) List of option objects to include in the option group. Note that options differ from one RDS engine to another. A full list of all options for a given RDS engine can be discovered via the AWS command line interface by running `aws rds describe-option-group-options --engine-name <rds_engine_name>`.
+* `option` - (Optional) List of option objects to include in the option group. Note that options differ from one RDS engine to another. A full list of all options for a given RDS engine can be discovered via the AWS command line interface by running
+
+  ```
+  aws rds describe-option-group-options --engine-name <rds_engine_name>
+  ```
 
 * `prefix` - (Required) Prefix for option group name. The full name is generated from the prefix and the engine name and engine version. The prefix may contain only letters, digits, or hyphens. See [Working with DB option groups](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithOptionGroups.html) for additional restrictions.
 
