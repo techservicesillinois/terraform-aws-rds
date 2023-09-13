@@ -143,6 +143,7 @@ module "db" {
 | port | The port on which the DB accepts connections | string | - | yes |
 | publicly\_accessible | Bool to control if instance is publicly accessible | bool | `false` | no |
 | replicate\_source\_db | Specifies that this resource is a Replicate database, and to use this value as the source database. This correlates to the identifier of another Amazon RDS database to replicate. | string | `` | no |
+| feature_role_arns | A map of feature names to IAM role ARNs to attach to the RDS instance | string | `<map>` | no |
 | security\_group\_names | Additonal security groups to associated with the task or service. This is a space delimited string list of security group names. | - | no |
 | skip\_final\_snapshot | Determines whether a final DB snapshot is created before the DB instance is deleted. If true is specified, no DBSnapshot is created. If false is specified, a DB snapshot is created before the DB instance is deleted, using the value from `final_snapshot_identifier` | bool | `true` | no |
 | snapshot\_identifier | Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05. | string | `` | no |
