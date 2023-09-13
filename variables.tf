@@ -160,6 +160,12 @@ variable "replicate_source_db" {
   default     = null
 }
 
+variable "feature_role_arns" {
+  description = "(Optional) A map of feature names to IAM role ARNs to attach to the RDS instance"
+  type        = map(string)
+  default     = {}
+}
+
 variable "security_group_names" {
   description = "List of security group names"
   type        = list(string)

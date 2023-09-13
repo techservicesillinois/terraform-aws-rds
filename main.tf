@@ -84,3 +84,10 @@ resource "aws_db_instance" "default" {
     prevent_destroy = true
   }
 }
+
+resource "aws_db_instance_role_association" "default" {
+  for_each               = var.feature_role_arns
+  db_instance_identifier = var.identifier
+  feature_name           = each.key
+  role_arn               = each.value
+}
