@@ -1,5 +1,6 @@
 locals {
-  og_name = format("%s-%s-%s", var.name_prefix, var.engine, replace(var.engine_version, ".", "-"))
+  og_description = (var.description != null) ? var.description : format("%s option group", local.og_name)
+  og_name        = format("%s-%s-%s", var.engine, replace(var.engine_version, ".", "-"), var.name_suffix)
 }
 
 # todo: module should allow a separate VPC security group to be supplied
@@ -11,10 +12,10 @@ data "aws_security_group" "selected" {
 
 resource "aws_db_option_group" "default" {
   name                     = local.og_name
-  option_group_description = format("%s option group", local.og_name)
+  option_group_description = local.og_description
   engine_name              = var.engine
   major_engine_version     = var.engine_version
-  tags                     = merge({ Name = var.name_prefix }, var.tags)
+  tags                     = merge({ Name = var.name_suffix }, var.tags)
 
   dynamic "option" {
     for_each = toset(var.option != null ? var.option : [])

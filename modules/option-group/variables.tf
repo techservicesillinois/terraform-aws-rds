@@ -1,9 +1,18 @@
+variable "description" {
+  description = "Description of option group"
+  default     = null
+}
+
 variable "engine" {
   description = "Database engine to which group applies"
 }
 
 variable "engine_version" {
   description = "Major engine version to which group applies"
+}
+
+variable "name_suffix" {
+  description = "Suffix for option group name (appended after engine and engine_version)"
 }
 
 variable "option" {
@@ -19,8 +28,10 @@ variable "option" {
   }))
 }
 
-variable "name_prefix" {
-  description = "Prefix for option group name"
+variable "security_group_names" {
+  description = "List of VPC security group names used for these options"
+  type        = list(string)
+  default     = []
 }
 
 variable "tags" {
@@ -35,10 +46,4 @@ variable "timeouts" {
     delete = optional(string)
   })
   default = null
-}
-
-variable "security_group_names" {
-  description = "A list of VPC security group names used for these options"
-  type        = list(string)
-  default     = []
 }

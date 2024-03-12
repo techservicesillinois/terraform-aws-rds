@@ -4,6 +4,11 @@
 
 Provide an [RDS database instance](https://www.terraform.io/docs/providers/aws/r/db_instance.html).
 
+Also provides submodules for managing other resources related to RDS. The following submodules are supported.
+
+* [option-group](modules/option-group/README.md)
+* parameter-group – **not yet integrated**
+
 Use the [terraform-aws-client-server-security-group](https://github.com/techservicesillinois/terraform-aws-client-server-security-group) module to create security groups
 to be used by clients and servers of this RDS instance. The referred-to module
 creates two RDS security groups – one a client security group, and the other a
