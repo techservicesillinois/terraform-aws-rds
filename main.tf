@@ -78,6 +78,7 @@ resource "aws_db_instance" "default" {
 
   lifecycle {
     ignore_changes = [
+      allocated_storage,
       engine_version,
       password,
     ]
