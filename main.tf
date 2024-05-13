@@ -10,7 +10,7 @@ data "aws_security_group" "selected" {
 resource "random_password" "default" {
   length           = 24
   special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  override_special = "!#$%*()-_=+[]{}<>:?"
 }
 
 # TODO: Investigate how to make dump to snapshot and restore from
