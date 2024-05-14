@@ -88,7 +88,7 @@ resource "aws_db_instance" "default" {
 
 resource "aws_db_instance_role_association" "default" {
   for_each               = var.feature_role_arns
-  db_instance_identifier = var.identifier
+  db_instance_identifier = aws_db_instance.default.identifier
   feature_name           = each.key
   role_arn               = each.value
 }
