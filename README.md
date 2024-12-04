@@ -6,6 +6,7 @@ Provide an [RDS database instance](https://www.terraform.io/docs/providers/aws/r
 
 Also provides submodules for managing other resources related to RDS. The following submodules are supported.
 
+* [event-subscription](modules/event-subscription/README.md)
 * [option-group](modules/option-group/README.md)
 * parameter-group – **not yet integrated**
 
